@@ -1,5 +1,5 @@
 # Online-Banking-System-MERN
-### Online Banking Website featuring:
+### Online Banking Website with features as follows:
 * Multiple Accounts.
 * Withdraw/Deposit of Money/Funds.
 * Transfer of Funds from an account to other.
