@@ -2,8 +2,9 @@ const authMiddleware = require('../middlewares/authMiddleware');
 const Transaction = require('../models/transactionModel');
 const User = require('../models/userModel');
 const router = require('express').Router();
-const stripe = require("stripe")(process.env.STRIPE_KEY);
-const { uuid } = require('uuidv4')
+const { v4: uuidv4 } = require("uuid")
+const stripe = require("stripe")("sk_test_51MarKISJbAJP59qDH2zYePR5es20RWy8AjFetv6hhamMhKhYQMiUm6bzPVHHvb3llz2DeKtUF02ZSObGpScqsN1Y001cwGbG7H");
+// const { uuid } = require('uuidv4')
 // transfer money from one account to another
 router.post('/transfer-fund', authMiddleware,async(req, res)=>{
     try{
@@ -97,20 +98,23 @@ router.post('/deposit-funds',authMiddleware,async(req,res)=>{
       source: token.id,
     });
     //create a charge
-    const charge = await stripe.paymentIntents.create({
+    const payment = await stripe.paymentIntents.create({
       amount: amount,
-      currency: "USD",
+      currency: "INR",
       customer: customer.id,
+      payment_method: token.card.id,
+      payment_method_types: ['card'],
+      confirm: true,
       receipt_email: token.email,
       description: "Deposited to Online Banking System",
     },
     {
-      idempotencyKey: uuid()
+      idempotencyKey: uuidv4()
     }
    );
 
    // save the transaction
-   if(charge.status === 'requires_payment_method'){
+   if(payment.status === 'succeeded'){
     const newTransaction = new Transaction({
       sender: req.body.userid,
       receiver: req.body.userid,

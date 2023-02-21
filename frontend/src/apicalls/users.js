@@ -28,6 +28,7 @@ export const RegisterUser = async(payload) => {
 export const getUserInfo = async() => {
     try{
      const { data } = await axiosInstance.post("/api/users/get-user-info");
+     console.log(data)
      return data;
     }
     catch(error){
