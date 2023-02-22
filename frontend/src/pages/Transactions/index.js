@@ -52,7 +52,7 @@ function Transactions() {
         title: "Type",
         dataIndex: "type",
         render: (text,record) => {
-            return record.sender._id === user._id? "Debit" : "Credit"
+            return record.sender._id === user._id && record.reference!=="stripe deposit" ? "Debit" : "Credit"
         }
     },
     {

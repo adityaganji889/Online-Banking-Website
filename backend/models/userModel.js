@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const Transaction = require('./transactionModel')
+const Request = require('./requestsModel')
 
 const userSchema = new mongoose.Schema({
     firstName: {
@@ -50,5 +52,11 @@ const userSchema = new mongoose.Schema({
     timestamps: true,
    }
 )
+
+userSchema.post('remove',async function(req,next){
+    await Transaction.remove({sender: this._id})
+    await Request.remove({sender: this._id})
+    next()
+})
 
 module.exports = mongoose.model("users",userSchema);

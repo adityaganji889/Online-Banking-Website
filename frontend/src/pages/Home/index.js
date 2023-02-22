@@ -1,10 +1,15 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import PageTitle from '../../components/PageTitle'
+import { HideLoading, ShowLoading } from '../../redux/loadersSlice';
+
 
 function Home() {
   const {user} = useSelector(state=>state.users)
   const dispatch = useDispatch()
+  useEffect(()=>{
+
+  },[user])
   return (
     <div>
       <PageTitle title={`Hello ${user.firstName} ${user.lastName}, welcome to the online banking system`}/>
@@ -22,7 +27,7 @@ function Home() {
             Balance
           </h1>
           <h1 className='text-md text-white'>
-            Rs {user.balance || 0}          
+            $ {user.balance || 0}          
           </h1>
         </div>
       </div>

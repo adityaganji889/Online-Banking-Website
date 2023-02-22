@@ -61,7 +61,7 @@ function Register() {
                 <Col span={6}>
                   <Form.Item label="Identification Type" name="identificationType">
                     <select>
-                        <option value="NATIONAL_ID">National ID</option>
+                        <option value="NATIONAL_ID" selected>National ID</option>
                         <option value="PASSPORT">Passport</option>
                         <option value="DRIVING_LICENSE">Driving License</option>
                         <option value="SOCIAL_CARD">Social Security Card (SSN)</option>
