@@ -4,10 +4,7 @@ const User = require('../models/userModel');
 const router = require('express').Router();
 const { v4: uuidv4 } = require("uuid")
 const stripe = require("stripe")("sk_test_51MarKISJbAJP59qDH2zYePR5es20RWy8AjFetv6hhamMhKhYQMiUm6bzPVHHvb3llz2DeKtUF02ZSObGpScqsN1Y001cwGbG7H");
-<<<<<<< HEAD
-=======
 // const { uuid } = require('uuidv4')
->>>>>>> 57a83be2c40e7644f201d4049224ba1710ca6c39
 // transfer money from one account to another
 router.post('/transfer-fund', authMiddleware,async(req, res)=>{
     try{
@@ -102,11 +99,7 @@ router.post('/deposit-funds',authMiddleware,async(req,res)=>{
     });
     //create a charge
     const payment = await stripe.paymentIntents.create({
-<<<<<<< HEAD
       amount: amount*100,
-=======
-      amount: amount,
->>>>>>> 57a83be2c40e7644f201d4049224ba1710ca6c39
       currency: "INR",
       customer: customer.id,
       payment_method: token.card.id,
