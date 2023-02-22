@@ -117,6 +117,8 @@ router.get("/get-all-users",authMiddleware,async(req,res)=>{
 // update user verified status
 router.post('/update-user-verified-status',authMiddleware,async(req,res)=>{
   try{
+     const user = await User.find({_id: req.body.selectedUser})
+     if(user._id!==req.body.userid){
      await User.findByIdAndUpdate(req.body.selectedUser,{
       isVerified: req.body.isVerified,
     })
@@ -125,6 +127,7 @@ router.post('/update-user-verified-status',authMiddleware,async(req,res)=>{
       message: "User verified status updated successfully",
       success: true,
     })
+   }
   }
   catch(error){
     res.send({
