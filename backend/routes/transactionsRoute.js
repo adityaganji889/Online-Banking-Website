@@ -99,7 +99,7 @@ router.post('/deposit-funds',authMiddleware,async(req,res)=>{
     });
     //create a charge
     const payment = await stripe.paymentIntents.create({
-      amount: amount,
+      amount: amount*100,
       currency: "INR",
       customer: customer.id,
       payment_method: token.card.id,

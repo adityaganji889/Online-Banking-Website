@@ -9,10 +9,9 @@ function DepositModal({showDepositModal, setShowDepositModal, reloadData}) {
     const [form] = Form.useForm()
     const dispatch = useDispatch()
     const onToken = async(token) => {
-     
      try{ 
        dispatch(ShowLoading())
-       const response = await DepositFunds({token, amount: form.getFieldValue("amount")})
+       const response = await DepositFunds({token, amount: Number(form.getFieldValue("amount"))})
        dispatch(HideLoading())
        if(response.success){
         reloadData();
@@ -46,7 +45,7 @@ function DepositModal({showDepositModal, setShowDepositModal, reloadData}) {
             <button className='primary-outline-btn'>Cancel</button>
             <StripeCheckout token={onToken} 
             currency="INR"
-            amount={form.getFieldValue("amount")*100}
+            amount={Number(Number(form.getFieldValue("amount"))*100)}
             shippingAddress
             stripeKey="pk_test_51MarKISJbAJP59qD6NxAgHskLoPFb1PHLjB2ZQ91SYO2dwiivgP91B07dgXzCEhdHqTB58sXI4Z5GtR6yXXMYRVN00rWHvsrLr">
             <button className='primary-contained-btn'>Deposit</button>
