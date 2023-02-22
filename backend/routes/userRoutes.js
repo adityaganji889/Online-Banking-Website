@@ -99,12 +99,15 @@ router.post("/get-user-info",authMiddleware,async(req,res)=>{
 //get all users
 router.get("/get-all-users",authMiddleware,async(req,res)=>{
   try{
-   const users = await User.find();
-   res.send({
-    data: users,
-    message: "Users fetched successfully",
-    success: true,
-   })
+   const user = await User.find({_id: req.body.userid})
+   if(user.isAdmin){
+    const users = await User.find();
+    res.send({
+     data: users,
+     message: "Users fetched successfully",
+     success: true,
+    })
+   }
   }
   catch(error){
    res.send({
