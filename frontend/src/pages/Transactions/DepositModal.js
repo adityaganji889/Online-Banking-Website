@@ -45,7 +45,7 @@ function DepositModal({showDepositModal, setShowDepositModal, reloadData}) {
             <button className='primary-outline-btn'>Cancel</button>
             <StripeCheckout token={onToken} 
             currency="INR"
-            amount={form.getFieldValue("amount")}
+            amount={Number(Number(form.getFieldValue("amount"))*100)}
             shippingAddress
             stripeKey="pk_test_51MarKISJbAJP59qD6NxAgHskLoPFb1PHLjB2ZQ91SYO2dwiivgP91B07dgXzCEhdHqTB58sXI4Z5GtR6yXXMYRVN00rWHvsrLr">
             <button className='primary-contained-btn'>Deposit</button>
