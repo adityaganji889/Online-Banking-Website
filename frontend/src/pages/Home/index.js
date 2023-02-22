@@ -27,7 +27,11 @@ function Home() {
             Balance
           </h1>
           <h1 className='text-md text-white'>
+<<<<<<< HEAD
             $ {user.balance || 0}          
+=======
+            &#8377; {user.balance || 0}          
+>>>>>>> 57a83be2c40e7644f201d4049224ba1710ca6c39
           </h1>
         </div>
       </div>

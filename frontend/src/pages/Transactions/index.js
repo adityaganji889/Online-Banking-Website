@@ -47,6 +47,22 @@ function Transactions() {
     {
         title: "Amount",
         dataIndex: "amount",
+        render: (text,record) => {
+          if(record.sender._id === user._id && record.reference!=="stripe deposit"){
+            return (
+              <div style={{color: "red"}}>
+                - &#8377; {record.amount}
+              </div>
+            )
+          }
+          else{
+            return (
+              <div style={{color: "green"}}>
+                + &#8377; {record.amount}
+              </div>
+            )
+          }
+        }
     },
     {
         title: "Type",

@@ -45,12 +45,16 @@ function DepositModal({showDepositModal, setShowDepositModal, reloadData}) {
       <div className='flex justify-end gap-1'>
             <button className='primary-outline-btn'>Cancel</button>
             <StripeCheckout token={onToken} 
+<<<<<<< HEAD
             currency="USD"
             amount={form.getFieldValue("amount")}
+=======
+            currency="INR"
+            amount={form.getFieldValue("amount")*100}
+>>>>>>> 57a83be2c40e7644f201d4049224ba1710ca6c39
             shippingAddress
-            billingAddress={false}
-            stripeKey="pk_test_51LDqLISIwXkT6LtikLoyymgzucq5upy1YQkOQcdxWoqzj0AR5tC7w0FNSZVFreZy0W4IanSxBox1VbyhoEKtd69z00fQAXGQXB">
-              <button className='primary-contained-btn'>Deposit</button>
+            stripeKey="pk_test_51MarKISJbAJP59qD6NxAgHskLoPFb1PHLjB2ZQ91SYO2dwiivgP91B07dgXzCEhdHqTB58sXI4Z5GtR6yXXMYRVN00rWHvsrLr">
+            <button className='primary-contained-btn'>Deposit</button>
             </StripeCheckout> 
       </div>
       </Form>

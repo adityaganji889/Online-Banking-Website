@@ -86,6 +86,13 @@ function Requests() {
     { 
         title: "Amount",
         dataIndex: "amount",
+        render(text,record){
+          return(
+             <>
+              &#8377; {record.amount}
+             </>
+          )
+        },
     },
     {
         title: "Date",
