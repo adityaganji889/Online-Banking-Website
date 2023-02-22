@@ -1,9 +1,13 @@
 # Online Banking Website
 ## Features:
+* User Authentication.
 * Multiple Accounts.
 * Withdraw/Deposit of Money/Funds.
-* Transfer of Funds from an account to other.
-* Requesting money from an account.
+* Transfer of Funds from a user account to another.
+* Requesting money from an account of another user.
+* Admin Can Suspend/Activate existing user.
+* If suspended an existing user, then that user can't login despite being registered.
+* If activated that existing user, then that user can login.
 
 ## Tech Stack Used:
 #### Front-End:
