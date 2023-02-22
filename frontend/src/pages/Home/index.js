@@ -2,14 +2,15 @@ import React, {useEffect} from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import PageTitle from '../../components/PageTitle'
 import { HideLoading, ShowLoading } from '../../redux/loadersSlice';
+import { ReloadUser } from '../../redux/usersSlice';
 
 
 function Home() {
   const {user} = useSelector(state=>state.users)
   const dispatch = useDispatch()
   useEffect(()=>{
-
-  },[user])
+    dispatch(ReloadUser(true))
+  },[dispatch])
   return (
     <div>
       <PageTitle title={`Hello ${user.firstName} ${user.lastName}, welcome to the online banking system`}/>

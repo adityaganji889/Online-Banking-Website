@@ -99,8 +99,8 @@ router.post("/get-user-info",authMiddleware,async(req,res)=>{
 //get all users
 router.get("/get-all-users",authMiddleware,async(req,res)=>{
   try{
-   const user = await User.find({_id: req.body.userid})
-   if(user.isAdmin){
+    const user = await User.findOne({ _id: req.body.userid})
+    if(user.isAdmin){
     const users = await User.find();
     res.send({
      data: users,
@@ -120,7 +120,7 @@ router.get("/get-all-users",authMiddleware,async(req,res)=>{
 // update user verified status
 router.post('/update-user-verified-status',authMiddleware,async(req,res)=>{
   try{
-     const user = await User.find({_id: req.body.selectedUser})
+     const user = await User.findOne({_id: req.body.selectedUser})
      if(user._id!==req.body.userid){
      await User.findByIdAndUpdate(req.body.selectedUser,{
       isVerified: req.body.isVerified,
