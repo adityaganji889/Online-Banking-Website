@@ -4,7 +4,6 @@ const User = require('../models/userModel');
 const router = require('express').Router();
 const { v4: uuidv4 } = require("uuid")
 const stripe = require("stripe")("sk_test_51MarKISJbAJP59qDH2zYePR5es20RWy8AjFetv6hhamMhKhYQMiUm6bzPVHHvb3llz2DeKtUF02ZSObGpScqsN1Y001cwGbG7H");
-// const { uuid } = require('uuidv4')
 // transfer money from one account to another
 router.post('/transfer-fund', authMiddleware,async(req, res)=>{
     try{
