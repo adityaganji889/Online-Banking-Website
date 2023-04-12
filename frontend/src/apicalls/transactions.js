@@ -37,6 +37,27 @@ export const getTransactionsOfUser = async () => {
 }
 
 
+export const getCreditTransactionsOfUser = async () => {
+    try{
+       const {data} = await axiosInstance.post('/api/transactions/get-all-credited-transactions-by-user');
+       return data;
+    }
+    catch(error){
+        return error.response.data;
+    }
+}
+
+export const getDebitTransactionsOfUser = async () => {
+    try{
+       const {data} = await axiosInstance.post('/api/transactions/get-all-debited-transactions-by-user');
+       return data;
+    }
+    catch(error){
+        return error.response.data;
+    }
+}
+
+
 export const DepositFunds = async(payload) => {
     try{
        const {data} = await axiosInstance.post('/api/transactions/deposit-funds',payload);

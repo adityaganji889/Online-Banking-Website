@@ -85,6 +85,60 @@ router.post('/get-all-transactions-by-user', authMiddleware, async(req,res)=>{
     }
 })
 
+// get all credited transactions for a user
+
+router.post('/get-all-credited-transactions-by-user', authMiddleware, async(req,res)=>{
+  try{
+    const transactions = await Transaction.find({
+      $or: [{ sender: req.body.userid}, {receiver: req.body.userid}],
+    }).sort({createdAt: -1}).populate("sender").populate("receiver");
+    const filteredtransactions = transactions.filter((transaction,key)=>{
+      if(transaction.receiver._id == req.body.userid){
+        return transaction;
+      }
+    });
+    res.send({
+      message: "Credited Transaction Fetched Successfully",
+      data: filteredtransactions,
+      success: true,
+    })
+  }
+  catch(error){
+    res.send({
+      message: "Credited Transactions Not Fetched Successfully",
+      data: null,
+      success: false,
+    })
+  }
+})
+
+// get all debited transactions for a user
+
+router.post('/get-all-debited-transactions-by-user', authMiddleware, async(req,res)=>{
+  try{
+    const transactions = await Transaction.find({
+      $or: [{ sender: req.body.userid}, {receiver: req.body.userid}],
+    }).sort({createdAt: -1}).populate("sender").populate("receiver");
+    const filteredtransactions = transactions.filter((transaction,key)=>{
+      if(transaction.sender._id == req.body.userid && transaction.reference!=='stripe deposit'){
+        return transaction;
+      }
+    });
+    res.send({
+      message: "Debited Transaction Fetched Successfully",
+      data: filteredtransactions,
+      success: true,
+    })
+  }
+  catch(error){
+    res.send({
+      message: "Debited Transactions Not Fetched Successfully",
+      data: null,
+      success: false,
+    })
+  }
+})
+
 
 // Deposit Funds using Stripe
 router.post('/deposit-funds',authMiddleware,async(req,res)=>{

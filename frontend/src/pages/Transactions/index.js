@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react'
 import PageTitle from '../../components/PageTitle'
-import {message, Table} from 'antd'
+import {message, Table, Form} from 'antd'
 import TransferFundsModal from './TransferFundsModal';
 import { useDispatch, useSelector } from 'react-redux';
-import { getTransactionsOfUser } from '../../apicalls/transactions';
+import { getCreditTransactionsOfUser, getDebitTransactionsOfUser, getTransactionsOfUser } from '../../apicalls/transactions';
 import { HideLoading, ShowLoading } from '../../redux/loadersSlice';
 import moment from 'moment';
 import DepositModal from './DepositModal';
@@ -12,13 +12,22 @@ function Transactions() {
   const [showTransferFundsModal, setShowTransferFundsModal] = useState(false);
   const [showDepositModal, setShowDepositModal] = useState(false)
   const [data=[],setData] = useState([]);
+  const [SelectedOption,setSelectedOption] = useState("all");
   const {user} = useSelector(state=>state.users);
   const dispatch = useDispatch();
   const getData = async() => {
      try{
+       let response;
        dispatch(ShowLoading());
-       const response = await getTransactionsOfUser();
-       console.log(response.data)
+       if(SelectedOption==="all"){
+        response = await getTransactionsOfUser();
+       }
+       else if(SelectedOption==="credit"){
+        response = await getCreditTransactionsOfUser();
+       }
+       else if(SelectedOption==="debit"){
+        response = await getDebitTransactionsOfUser();
+       }
        if(response.success){
         setData(response.data);
        }
@@ -99,6 +108,20 @@ function Transactions() {
     <div>
         <div className='flex justify-between items-center'>
         <PageTitle title="Transactions"/>
+        <Form className='flex justify-between items-center gap-2'>
+        <Form.Item label="Filter Transactions:" name="filteredTransactions" className='mt-35'>
+                    <select value={SelectedOption} onChange={(e)=>setSelectedOption(e.target.value)}>
+                    <option value="all">All</option>
+                    <option value="credit">Credit</option>
+                    <option value="debit">Debit</option>
+                    </select>
+        </Form.Item>
+        <button className='primary-contained-btn mt-1' type="button" onClick={()=>{
+            getData();
+         }}>
+                Search
+        </button>
+        </Form>
         <div className='flex gap-1'>
           <button className='primary-outline-btn' onClick={()=>setShowDepositModal(true)}>
             Deposit
