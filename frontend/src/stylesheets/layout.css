@@ -53,3 +53,8 @@
 .content{
     padding-top: 15px;
 }
+
+
+.hidden{
+    visibility: hidden;
+}

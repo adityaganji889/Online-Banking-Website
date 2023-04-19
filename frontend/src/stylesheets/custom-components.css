@@ -30,6 +30,10 @@ table{
     border-radius: 3px;
 }
 
+button:hover{
+    cursor: pointer;
+}
+
 @keyframes loader-anim {
     0%{
         transform: rotate(0deg);
@@ -38,3 +42,4 @@ table{
         transform: rotate(360deg);
     }
 }
+

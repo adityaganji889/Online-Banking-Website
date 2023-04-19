@@ -1,7 +1,11 @@
 select {
     width: 100% !important;
+    cursor: pointer;
 }
 
+option:focus{
+    cursor: pointer;
+}
 
 input,  select, textarea {
     border: 1px solid rgb(86, 86, 86);
@@ -21,6 +25,13 @@ input:focus, select:focus, textarea:focus {
     text-transform: uppercase;
 }
 
+.primary-contained-btn:hover{
+    background-color: #fff;
+    color: var(--primary);
+    padding: 8px 20px;
+    text-transform: uppercase;
+}
+
 .primary-outline-btn{
     background-color: #fff;
     color: var(--primary);
@@ -28,3 +39,9 @@ input:focus, select:focus, textarea:focus {
     text-transform: uppercase;
 }
 
+.primary-outline-btn:hover{
+    background-color: var(--primary);
+    color: #fff;
+    padding: 8px 20px;
+    text-transform: uppercase;    
+}

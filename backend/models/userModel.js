@@ -19,6 +19,14 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    profileId: {
+        type: String,
+        default: ""
+    },
+    walletAddress: {
+        type: String,
+        default: ""
+    },
     identificationType: {
         type: String,
         required: true,

@@ -2,6 +2,7 @@ import React,{useState} from 'react'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom';
 
+
 function DefaultLayout({children}) {
   const {user} = useSelector(state=>state.users);
   const [collapsed,setCollapsed] = useState(false);
@@ -31,15 +32,15 @@ function DefaultLayout({children}) {
     //     onClick: () => navigate('/profile'),
     //     path: '/profile'
     // },
-    {
-        title: 'Logout',
-        icon: <i className="ri-logout-box-line"></i>,
-        onClick: () => {
-            localStorage.removeItem('token');
-            navigate('/login');
-        },
-        path: '/logout'
-    }
+    // {
+    //     title: 'Logout',
+    //     icon: <i className="ri-logout-box-line"></i>,
+    //     onClick: () => {
+    //         localStorage.removeItem('token');
+    //         navigate('/login');
+    //     },
+    //     path: '/logout'
+    // }
   ]
   const adminMenu = [
     {
@@ -72,15 +73,15 @@ function DefaultLayout({children}) {
     //     onClick: () => navigate('/profile'),
     //     path: '/profile'
     // },
-    {
-        title: 'Logout',
-        icon: <i className="ri-logout-box-line"></i>,
-        onClick: () => {
-            localStorage.removeItem('token');
-            navigate('/login');
-        },
-        path: '/logout'
-    }
+    // {
+    //     title: 'Logout',
+    //     icon: <i className="ri-logout-box-line"></i>,
+    //     onClick: () => {
+    //         localStorage.removeItem('token');
+    //         navigate('/login');
+    //     },
+    //     path: '/logout'
+    // }
   ]
   const menuToRender = user.isAdmin===true ? adminMenu : userMenu;
   console.log(menuToRender);

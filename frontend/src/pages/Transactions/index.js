@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useState, useRef} from 'react'
 import PageTitle from '../../components/PageTitle'
 import {message, Table, Form} from 'antd'
 import TransferFundsModal from './TransferFundsModal';
@@ -7,12 +7,17 @@ import { getCreditTransactionsOfUser, getDebitTransactionsOfUser, getTransaction
 import { HideLoading, ShowLoading } from '../../redux/loadersSlice';
 import moment from 'moment';
 import DepositModal from './DepositModal';
+import GeneratePDF from '../../components/GeneratePDF';
+import { useReactToPrint } from 'react-to-print'
 
-function Transactions() {
+const Transactions = () => {
   const [showTransferFundsModal, setShowTransferFundsModal] = useState(false);
   const [showDepositModal, setShowDepositModal] = useState(false)
+  const [filterTitle, setFilterTitle] = useState("");
+  const [showPDFModal, setShowPDFModal] = useState(false);
   const [data=[],setData] = useState([]);
   const [SelectedOption,setSelectedOption] = useState("all");
+  let refer;
   const {user} = useSelector(state=>state.users);
   const dispatch = useDispatch();
   const getData = async() => {
@@ -21,12 +26,15 @@ function Transactions() {
        dispatch(ShowLoading());
        if(SelectedOption==="all"){
         response = await getTransactionsOfUser();
+        setFilterTitle("History of all your transactions");
        }
        else if(SelectedOption==="credit"){
         response = await getCreditTransactionsOfUser();
+        setFilterTitle("History of all your credited transactions");
        }
        else if(SelectedOption==="debit"){
         response = await getDebitTransactionsOfUser();
+        setFilterTitle("History of all your debited transactions");
        }
        if(response.success){
         setData(response.data);
@@ -104,6 +112,15 @@ function Transactions() {
         dataIndex: "status",
     },
   ]
+  const componentPDF = useRef();
+  const generatePDF = useReactToPrint({
+    content: ()=>componentPDF.current,
+    documentTitle: "Account Number : " + user._id + " " + filterTitle,
+    onAfterPrint: ()=> { 
+        message.success(`${filterTitle} is saved in a pdf successfully.`)
+        setShowPDFModal(false);
+    }
+  })
   return (
     <div>
         <div className='flex justify-between items-center'>
@@ -122,18 +139,43 @@ function Transactions() {
                 Search
         </button>
         </Form>
-        <div className='flex gap-1'>
+        <div className='flex gap-1 mt-1'>
           <button className='primary-outline-btn' onClick={()=>setShowDepositModal(true)}>
             Deposit
           </button>
           <button className='primary-contained-btn' onClick={()=>setShowTransferFundsModal(true)}>
             Transfer
           </button>
+          <div onClick={()=>{
+            setShowPDFModal(true)
+            if(showPDFModal){
+              generatePDF();
+            }
+          }}>
+          <button className='primary-outline-btn' type="button">
+                Print PDF
+          </button>
+          </div>
         </div>
        </div>
        <Table columns={columns} dataSource={data} className='mt-2'/>
        {showTransferFundsModal && <TransferFundsModal showTransferFundsModal={showTransferFundsModal} setShowTransferFundsModal={setShowTransferFundsModal} reloadData={getData}/>}
        {showDepositModal && <DepositModal showDepositModal={showDepositModal} setShowDepositModal={setShowDepositModal} reloadData={getData}/>}
+       {/* {showPDFModal && <GeneratePDF showPDFModal={showPDFModal} setShowPDFModal={setShowPDFModal} data={data} columns={columns} SelectedOption={SelectedOption} generatePDF={generatePDF} refer={refer} filterTitle={filterTitle} setFilterTitle={setFilterTitle}/>} */}
+       {showPDFModal&&<div ref={componentPDF}>
+        <div className='flex justify-between items-center'>
+         <PageTitle title={filterTitle}/>
+         <div>
+          <div>Account Holder Name : {user.firstName} {user.LastName}</div>
+          <div>Account Number : {user._id}</div>
+          <div>Email : {user.email}</div>
+          <div>Phone Number : {user.phoneNumber}</div>
+          <div>Current Balance : &#8377; {user.balance}</div>
+          <div>Address : {user.address}</div>
+         </div>
+        </div>
+       <Table columns={columns} dataSource={data} className='mt-2' pagination={false}/>
+    </div>}
     </div>
   )
 }

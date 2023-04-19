@@ -42,7 +42,7 @@ function DepositModal({showDepositModal, setShowDepositModal, reloadData}) {
             ]}/>
           </Form.Item>
       <div className='flex justify-end gap-1'>
-            <button className='primary-outline-btn'>Cancel</button>
+            <button className='primary-outline-btn' onClick={()=>setShowDepositModal(false)}>Cancel</button>
             <StripeCheckout token={onToken} 
             currency="INR"
             amount={Number(Number(form.getFieldValue("amount"))*100)}

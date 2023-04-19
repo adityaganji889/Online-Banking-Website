@@ -16,22 +16,42 @@ import './stylesheets/layout.css'
 import Transactions from './pages/Transactions';
 import Requests from './pages/Requests';
 import Users from './pages/users';
+import { createClient, configureChains, WagmiConfig } from 'wagmi';
+import { publicProvider } from 'wagmi/providers/public';
+import { mainnet } from "wagmi/chains";
+import { useEffect } from 'react';
 
-function App() {
+ const { provider, webSocketProvider } = configureChains([mainnet], [
+  publicProvider(),
+ ]);
+
+ const client = createClient({
+  provider,
+  webSocketProvider,
+  autoConnect: true,
+ });
+
+ function App() {
   const {loading} = useSelector(state=>state.loaders);
+  const {user} = useSelector(state=>state.users)
+  useEffect(()=>{
+    
+  },[user])  
   return (
       <div>
         {loading && <Loader/>}
-        <Router>
-        <Routes>
-          <Route path="/login" element={<PublicRoute><Login/></PublicRoute>}/>
-          <Route path="/register" element={<PublicRoute><Register/></PublicRoute>}/>
-          <Route path="/" element={<ProtectedRoute><Home/></ProtectedRoute>}/>
-          <Route path="/transactions" element={<ProtectedRoute><Transactions/></ProtectedRoute>}/>
-          <Route path="/requests" element={<ProtectedRoute><Requests/></ProtectedRoute>}/>
-          <Route path="/users" element={<ProtectedRoute><Users/></ProtectedRoute>}/>
-        </Routes>
-      </Router>
+        <WagmiConfig client={client}>
+         <Router>
+          <Routes>
+           <Route path="/login" element={<PublicRoute><Login/></PublicRoute>}/>
+           <Route path="/register" element={<PublicRoute><Register/></PublicRoute>}/>
+           <Route path="/" element={<ProtectedRoute><Home/></ProtectedRoute>}/>
+           <Route path="/transactions" element={<ProtectedRoute><Transactions/></ProtectedRoute>}/>
+           <Route path="/requests" element={<ProtectedRoute><Requests/></ProtectedRoute>}/>
+           <Route path="/users" element={<ProtectedRoute><Users/></ProtectedRoute>}/>
+          </Routes>
+         </Router>
+        </WagmiConfig>
       </div>
   );
 }
