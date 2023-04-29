@@ -36,7 +36,8 @@ function Home() {
           Balance
         </h1>
         <h1 className='text-md text-white'>
-          &#8377; {user.balance || 0}          
+          {/* &#8377;  */}
+          {user.balance || 0} ETH          
         </h1>
       </div>
     </div>

@@ -18,10 +18,10 @@ import Requests from './pages/Requests';
 import Users from './pages/users';
 import { createClient, configureChains, WagmiConfig } from 'wagmi';
 import { publicProvider } from 'wagmi/providers/public';
-import { mainnet } from "wagmi/chains";
+import { mainnet, goerli } from "wagmi/chains";
 import { useEffect } from 'react';
 
- const { provider, webSocketProvider } = configureChains([mainnet], [
+ const { provider, webSocketProvider } = configureChains([goerli], [
   publicProvider(),
  ]);
 

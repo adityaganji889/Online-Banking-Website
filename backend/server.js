@@ -8,6 +8,7 @@ const requestRoute = require('./routes/requestsRoute');
 const cookieParser = require('cookie-parser');
 const Moralis = require('moralis').default;
 const cors = require('cors')
+const { EvmChain } = require("@moralisweb3/common-evm-utils");
 
 const port = process.env.PORT || 5000
 
@@ -31,6 +32,7 @@ app.use('/api/requests',requestRoute);
 const startServer = async() => {
    await Moralis.start({
        apiKey: process.env.MORALIS_API_KEY,
+       defaultEvmApiChain: EvmChain.GOERLI
    });
    app.listen(port,()=>{
        console.log(`Server running on Port: ${port}`)

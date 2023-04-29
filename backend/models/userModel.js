@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
+require('mongoose-double')(mongoose)
 const Transaction = require('./transactionModel')
 const Request = require('./requestsModel')
+const SchemaTypes = mongoose.Schema.Types
 
 const userSchema = new mongoose.Schema({
     firstName: {
@@ -44,7 +46,7 @@ const userSchema = new mongoose.Schema({
         required: true,
     },
     balance: {
-        type: Number,
+        type: SchemaTypes.Double,
         default: 0,
     },
     isVerified: {

@@ -5,7 +5,8 @@ const jwt = require('jsonwebtoken');
 const authMiddleware = require('../middlewares/authMiddleware');
 const Moralis = require('moralis').default;
 const cookieParser = require('cookie-parser');
-
+const { EvmChain } = require("@moralisweb3/common-evm-utils");
+const ethers = require('ethers')
 
 const config = {
   domain: process.env.APP_DOMAIN,
@@ -136,7 +137,6 @@ router.post('/verify', async (req, res) => {
       await Moralis.Auth.verify({
         message,
         signature,
-        networkType: 'evm',
       })
     ).raw;
 
@@ -176,7 +176,20 @@ router.post('/verify', async (req, res) => {
     }
     else if(newUsers.walletAddress!==""&&newUsers.walletAddress===address){
       //generate token
-      const token = jwt.sign({userid: newUsers._id}, process.env.JWT_SECRET, {expiresIn: "1d"});
+      // const provider = ethers.getDefaultProvider('goerli')
+      const chain = EvmChain.GOERLI;
+      // const response = await Moralis.EvmApi.balance.getNativeBalance({
+      //   address,
+      //   chain,
+      // });
+      const provider = ethers.getDefaultProvider('goerli');
+      let balanceInEth = await provider.getBalance(address);
+      balanceInEth = ethers.utils.formatEther(balanceInEth);
+      let result = parseFloat(balanceInEth);
+      result = (result/1E18).toFixed(4);
+      newUsers.balance = parseFloat(result);
+      const newUser = await newUsers.save();
+      const token = jwt.sign({userid: newUser._id}, process.env.JWT_SECRET, {expiresIn: "1d"});
       res.send({
         message: "User logged in successfully",
         success: true,
@@ -219,6 +232,7 @@ router.get("/get-all-users",authMiddleware,async(req,res)=>{
    }
   }
   catch(error){
+   console.log("error:",error);
    res.send({
     message: error.message,
     success: false,

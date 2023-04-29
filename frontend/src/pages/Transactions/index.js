@@ -17,7 +17,7 @@ const Transactions = () => {
   const [showPDFModal, setShowPDFModal] = useState(false);
   const [data=[],setData] = useState([]);
   const [SelectedOption,setSelectedOption] = useState("all");
-  let refer;
+  // let refer;
   const {user} = useSelector(state=>state.users);
   const dispatch = useDispatch();
   const getData = async() => {
