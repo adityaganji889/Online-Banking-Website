@@ -7,6 +7,8 @@ import { Tabs, message, Table } from 'antd'
 import NewRequestModal from './NewRequestModal';
 import { getAllRequestsByUser, UpdateRequestStatus } from '../../apicalls/requests';
 import { ReloadUser } from '../../redux/usersSlice';
+import { ethers } from 'ethers';
+
 const { TabPane } = Tabs;
 
 function Requests() {
@@ -42,11 +44,48 @@ function Requests() {
        if(status==="accepted" && record.amount > user.balance){
         return;
        }
+       else if(status==="accepted"){
+        dispatch(ShowLoading());
+        let ether = String(record.amount);
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        ethers.utils.getAddress(record.senderWalletAddress);
+        const tx = await signer.sendTransaction({
+          to: record.senderWalletAddress,
+          value: ethers.utils.parseEther(ether)
+        });
+       const response = await UpdateRequestStatus({
+          sender: record.sender,
+          receiver: record.receiver,
+          senderWalletAddress: record.senderWalletAddress,
+          receiverWalletAddress: record.receiverWalletAddress,
+          amount: record.amount,
+          description: record.description,
+          status: status,
+          transactionHash: tx.hash!==""?tx.hash:""
+       })
+       dispatch(HideLoading());
+       if(response.success){
+        message.success(response.message);
+        getData();
+        dispatch(ReloadUser(true))
+       }
+       else{
+        message.error(response.message);
+        }
+       }
        else{
         dispatch(ShowLoading());
-       const response = await UpdateRequestStatus({
-          ...record,
-          status,
+        const response = await UpdateRequestStatus({
+          sender: record.sender,
+          receiver: record.receiver,
+          senderWalletAddress: record.senderWalletAddress,
+          receiverWalletAddress: record.receiverWalletAddress,
+          amount: record.amount,
+          description: record.description,
+          status: status,
+          transactionHash: "",
+          _id: record._id
        })
        dispatch(HideLoading());
        if(response.success){
@@ -89,7 +128,8 @@ function Requests() {
         render(text,record){
           return(
              <>
-              &#8377; {record.amount}
+              {/* &#8377; */}
+              {record.amount} ETH
              </>
           )
         },

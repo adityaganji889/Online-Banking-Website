@@ -18,6 +18,18 @@ const requestSchema = new mongoose.Schema({
     type: String,
     required: true,
    },
+   senderWalletAddress: {
+    type: String,
+    required: true
+   },
+   receiverWalletAddress: {
+    type: String,
+    default: ""
+   },
+   transactionHash: {
+    type: String,
+    default: ""
+   },
    status: {
     type: String,
     default: "pending",

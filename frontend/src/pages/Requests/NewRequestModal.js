@@ -11,6 +11,7 @@ function NewRequestModal({showNewRequestModal,setShowNewRequestModal,reloadData}
   };
   const {user} = useSelector(state=>state.users);
   const [isVerified, setIsVerified] = useState();
+  const [recipientUser,setRecipientUser] = useState("");
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const verifyAccount = async() => {
@@ -19,43 +20,48 @@ function NewRequestModal({showNewRequestModal,setShowNewRequestModal,reloadData}
        const response = await VerifyAccount({
         receiver: form.getFieldValue("receiver")
        })
+       dispatch(HideLoading())
        if(response.success){
-        reloadData();
+        // reloadData();
         setIsVerified(true);
+        setRecipientUser(response.data.walletAddress);
         // setShowNewRequestModal(false);
-        // message.success(response.message)
+        message.success(response.message)
        }
        else{
         setIsVerified(false);
-        // message.error(response.message)
+        message.error(response.message)
        }
-       dispatch(HideLoading())
      }
      catch(error){
+       dispatch(HideLoading());
        setIsVerified(false);
        message.error(error.message);
-       dispatch(HideLoading());
      }
   }
   const onFinish = async(values) => {
        try{
-        if(values.amount> user.balance){
+        if(Number(values.amount)> user.balance){
             message.error("Insufficient Funds");
             return;
         }
-         dispatch(ShowLoading())
          const payload = {
-            ...values,
+            amount: Number(values.amount),
+            receiver: values.receiver,
             sender: user._id,
-            reference: values.reference || "no reference",
-            status: "success",
+            senderWalletAddress: user.walletAddress,
+            receiverWalletAddress: recipientUser,
+            reference: values.description || "no reference",
+            status: "pending",
          };
+         dispatch(ShowLoading())
          const response = await SendRequest(payload);
+         dispatch(HideLoading())
          if(response.success){
+            reloadData();
             setShowNewRequestModal(false);
             message.success(response.message);
          }
-         dispatch(HideLoading())
        }
        catch(error){
          dispatch(HideLoading())
@@ -80,24 +86,27 @@ function NewRequestModal({showNewRequestModal,setShowNewRequestModal,reloadData}
             {isVerified===false && <div className='error-bg'>
                 Invalid Account.
             </div>}
+            <Form.Item label="Wallet Address" name="walletAddress" shouldUpdate={true}>
+               {recipientUser!==""?recipientUser:"------------------------------------------------------------------------------------"}
+            </Form.Item>
             <Form.Item label="Amount" name="amount" rules={[
                 {
                     required: true,
                     message: "Please input your amount!",
                 },
-                {
-                    max: user.balance,
-                    message: "Insufficient Balance",
-                }
+                // {
+                //     max: user.balance,
+                //     message: "Insufficient Balance",
+                // }
             ]}>
-                <input type="Number"/>
+                <input type="text"/>
             </Form.Item>
             <Form.Item label="Description" name="description">
                 <textarea type="text"/>
             </Form.Item>
             <div className='flex justify-end gap-1'>
-            <button className='primary-outline-btn'>Cancel</button>
-            {isVerified && <button className='primary-contained-btn'>Send Request</button>}
+            <button className='primary-outline-btn' onClick={()=>setShowNewRequestModal(false)}>Cancel</button>
+            {isVerified && <button className='primary-contained-btn' type="submit">Send Request</button>}
             </div>
         </Form>
         </Modal>

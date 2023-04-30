@@ -20,6 +20,18 @@ const transactionSchema = new mongoose.Schema({
     //     type: String,
     //     required: true
     // },
+    senderWalletAddress: {
+        type: String,
+        required: true
+    },
+    receiverWalletAddress: {
+        type: String,
+        required: true
+    },
+    transactionHash: {
+       type: String,
+       required: true
+    },
     reference: {
         type: String,
         required: true

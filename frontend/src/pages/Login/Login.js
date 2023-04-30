@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import {useNavigate} from 'react-router-dom';
-import {Form, Row, Col, message} from 'antd';
+import {Form, Row, Col, message as msg} from 'antd';
 import { LoginUser } from '../../apicalls/users';
 import { useSelector, useDispatch } from 'react-redux';
 import { HideLoading, ShowLoading } from '../../redux/loadersSlice';
@@ -18,6 +18,9 @@ function Login() {
   const { isConnected } = useAccount();
   const { signMessageAsync } = useSignMessage();
   const handleAuth = async (values) => {
+    if(!window.ethereum){
+      msg.error("No Metamask Wallet Found. Please install it and then retry.")
+    }
     //disconnects the web3 provider if it's already active
     if (isConnected) {
       await disconnectAsync();
@@ -71,17 +74,17 @@ function Login() {
       const response = await handleAuth(values);
       dispatch(HideLoading());
       if(response.success){
-        message.success(response.message);
+        msg.success(response.message);
         localStorage.setItem("token",response.data);
         window.location.href="/";
       }
       else{
-        message.error(response.message);
+        msg.error(response.message);
       }
     }
     catch(error){
       dispatch(HideLoading());
-      message.error(error.message);
+      msg.error(error.message);
     }
   }
   return (

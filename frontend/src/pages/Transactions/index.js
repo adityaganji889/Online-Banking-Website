@@ -68,14 +68,16 @@ const Transactions = () => {
           if(record.sender._id === user._id && record.reference!=="stripe deposit"){
             return (
               <div style={{color: "red"}}>
-                - &#8377; {record.amount}
+                {/* - &#8377;  */}
+                 - {record.amount} ETH
               </div>
             )
           }
           else{
             return (
               <div style={{color: "green"}}>
-                + &#8377; {record.amount}
+                {/* + &#8377;  */}
+                 + {record.amount} ETH
               </div>
             )
           }

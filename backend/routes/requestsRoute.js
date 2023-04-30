@@ -4,6 +4,7 @@ const authMiddleware = require('../middlewares/authMiddleware');
 const Request = require('../models/requestsModel');
 const User = require('../models/userModel')
 const Transaction = require('../models/transactionModel')
+const ethers = require('ethers')
 
 //get all requests to a user
 router.post('/get-all-requests-by-user',authMiddleware,async(req,res)=>{
@@ -27,12 +28,14 @@ router.post('/get-all-requests-by-user',authMiddleware,async(req,res)=>{
 
 router.post("/send-request",authMiddleware, async(req,res)=>{
     try{
-        const {receiver, amount, description} = req.body;
         const request = new Request({
             sender: req.body.userid,
-            receiver,
-            amount,
-            description,
+            receiver: req.body.receiver,
+            amount: req.body.amount,
+            description: req.body.reference,
+            senderWalletAddress: req.body.senderWalletAddress,
+            receiverWalletAddress: req.body.receiverWalletAddress,
+            status: req.body.status,
         });
         await request.save();
         res.send({
@@ -53,23 +56,46 @@ router.post('/update-request-status',authMiddleware, async(req,res)=>{
       if(req.body.status === "accepted"){
         //create a transaction
         const transaction = new Transaction({
-            sender: req.body.receiver._id,
-            receiver: req.body.sender._id,
+            sender: req.body.receiver,
+            receiver: req.body.sender,
+            senderWalletAddress: req.body.receiverWalletAddress,
+            receiverWalletAddress: req.body.senderWalletAddress,
+            transactionHash: req.body.transactionHash,
             amount: req.body.amount,
             reference: req.body.description,
-            status: "success"
+            status: req.body.transactionHash!==""?"success":"failed" 
         });
         await transaction.save()
         // update the balance of the users
         // add the amount to the sender (Who has sent the request)
-        await User.findByIdAndUpdate(req.body.sender._id,{
-            $inc: { balance: +req.body.amount }
-        })
+        const provider = ethers.getDefaultProvider('goerli'); 
+        //decrease the sender's balance 
+        const sender = await User.findOne({_id:req.body.sender._id})
+        let balanceInEthSender = await provider.getBalance(sender.walletAddress);
+        balanceInEthSender = ethers.utils.formatEther(balanceInEthSender);
+        let balanceLeftSender = parseFloat(balanceInEthSender);
+        sender.balance = parseFloat(balanceLeftSender);
+        await sender.save();
+        // await User.findByIdAndUpdate(req.body.sender._id,{
+        //     $inc: { balance: +req.body.amount }
+        // })
         // deduct the amount from the receiver (Who has received the request)
-        await User.findByIdAndUpdate(req.body.receiver._id,{
-            $inc: { balance: -req.body.amount }
-        })
+        // await User.findByIdAndUpdate(req.body.receiver._id,{
+        //     $inc: { balance: -req.body.amount }
+        // })
         // update the request status
+        const receiver = await User.findOne({_id:req.body.receiver})
+        let balanceInEthReceiver = await provider.getBalance(receiver.walletAddress);
+        balanceInEthReceiver = ethers.utils.formatEther(balanceInEthReceiver);
+        let balanceLeftReceiver = parseFloat(balanceInEthReceiver);
+        receiver.balance = parseFloat(balanceLeftReceiver);
+        await receiver.save();
+        await Request.findByIdAndUpdate(req.body._id,{
+            status: req.body.status,
+            transactionHash: req.body.transactionHash
+        })
+      }
+      else{
         await Request.findByIdAndUpdate(req.body._id,{
             status: req.body.status,
         })

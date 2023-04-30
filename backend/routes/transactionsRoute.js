@@ -3,23 +3,46 @@ const Transaction = require('../models/transactionModel');
 const User = require('../models/userModel');
 const router = require('express').Router();
 const { v4: uuidv4 } = require("uuid")
+const Moralis = require('moralis').default;
 const stripe = require("stripe")("sk_test_51MarKISJbAJP59qDH2zYePR5es20RWy8AjFetv6hhamMhKhYQMiUm6bzPVHHvb3llz2DeKtUF02ZSObGpScqsN1Y001cwGbG7H");
+const { EvmChain } = require("@moralisweb3/common-evm-utils");
+const ethers = require('ethers')
+
+
+const config = {
+  domain: process.env.APP_DOMAIN,
+  statement: 'Please sign this message to confirm your identity.',
+  uri: process.env.REACT_URL,
+  timeout: 60,
+};
+
 // transfer money from one account to another
 router.post('/transfer-fund', authMiddleware,async(req, res)=>{
     try{
       // save the transaction
       const newTransaction = new Transaction(req.body);
       await newTransaction.save();
-
+      const provider = ethers.getDefaultProvider('goerli'); 
       //decrease the sender's balance 
-      await User.findByIdAndUpdate(req.body.sender,{
-        $inc: { balance: -req.body.amount },
-      })
-
+      const sender = await User.findOne({_id:req.body.sender})
+      let balanceInEthSender = await provider.getBalance(sender.walletAddress);
+      balanceInEthSender = ethers.utils.formatEther(balanceInEthSender);
+      let balanceLeftSender = parseFloat(balanceInEthSender);
+      sender.balance = parseFloat(balanceLeftSender);
+      await sender.save();
+      // await User.findByIdAndUpdate(req.body.sender,{
+      //   $inc: { balance: -req.body.amount },
+      // })
       //increase the receiver's balance
-      await User.findByIdAndUpdate(req.body.receiver,{
-        $inc: { balance: req.body.amount },
-      })
+      // await User.findByIdAndUpdate(req.body.receiver,{
+      //   $inc: { balance: req.body.amount },
+      // })
+      const receiver = await User.findOne({_id:req.body.receiver})
+      let balanceInEthReceiver = await provider.getBalance(receiver.walletAddress);
+      balanceInEthReceiver = ethers.utils.formatEther(balanceInEthReceiver);
+      let balanceLeftReceiver = parseFloat(balanceInEthReceiver);
+      receiver.balance = parseFloat(balanceLeftReceiver);
+      await receiver.save();
       res.send({
         message: "Transaction Successful",
         data: newTransaction,

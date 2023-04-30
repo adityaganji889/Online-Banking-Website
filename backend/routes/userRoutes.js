@@ -177,7 +177,7 @@ router.post('/verify', async (req, res) => {
     else if(newUsers.walletAddress!==""&&newUsers.walletAddress===address){
       //generate token
       // const provider = ethers.getDefaultProvider('goerli')
-      const chain = EvmChain.GOERLI;
+      // const chain = EvmChain.GOERLI;
       // const response = await Moralis.EvmApi.balance.getNativeBalance({
       //   address,
       //   chain,
@@ -186,7 +186,6 @@ router.post('/verify', async (req, res) => {
       let balanceInEth = await provider.getBalance(address);
       balanceInEth = ethers.utils.formatEther(balanceInEth);
       let result = parseFloat(balanceInEth);
-      result = (result/1E18).toFixed(4);
       newUsers.balance = parseFloat(result);
       const newUser = await newUsers.save();
       const token = jwt.sign({userid: newUser._id}, process.env.JWT_SECRET, {expiresIn: "1d"});
